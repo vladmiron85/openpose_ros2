@@ -1,4 +1,5 @@
 import numpy as np
+import cv2
 import datetime
 import rclpy
 from builtin_interfaces.msg import Time
@@ -40,6 +41,11 @@ class OpenPosePreviewNode(Node):
                                                     description='The node name of input image.')
         self.declare_parameter('image_node', '/image', image_node_descriptor)
         image_node: str = self.get_parameter("image_node").get_parameter_value().string_value
+        show_video_steam_descriptor = ParameterDescriptor(type=ParameterType.PARAMETER_BOOL,
+                                                       description='If true, then window frame with video will appear.')
+        self.declare_parameter('show_video_steam', False, show_video_steam_descriptor)
+        self.show_video_steam: bool = self.get_parameter("show_video_steam").get_parameter_value().bool_value
+
 
         self.openpose_wrapper = OpenPoseWrapper(openpose_root)
         self.bridge = CvBridge()
@@ -91,6 +97,10 @@ class OpenPosePreviewNode(Node):
         pose_key_points_list_obj.header.stamp = timestamp
         pose_key_points_list_obj.header.frame_id = frame_id
         self._pose_publisher.publish(pose_key_points_list_obj)
+
+        if self.show_video_steam:
+            cv2.imshow('preview', result.cvOutputData)
+            cv2.waitKey(1)
 
     def get_img_callback(self, image_raw: Image) -> None:
         try:

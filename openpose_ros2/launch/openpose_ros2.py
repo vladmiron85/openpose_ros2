@@ -12,9 +12,10 @@ def generate_launch_description():
             parameters=[
                 {
                     "is_debug_mode": False,
-                    "openpose_root": "",
+                    "openpose_root": "/home/vlad/openpose",
                     "is_image_compressed": False,
-                    "image_node": ""
+                    "image_node": "/camera/color/image_raw",
+                    "show_video_steam": True
                 }
             ]
         )
